@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package com.crd.util.protobuf;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_package = "com.crd.events";
+option java_outer_classname = "EventType1Messages";
+
+message EventType1 {
+  string field1 = 1;
+}

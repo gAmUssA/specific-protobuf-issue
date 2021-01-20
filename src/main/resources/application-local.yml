@@ -1,0 +1,50 @@
+spring:
+  kafka:
+    properties:
+      schema.registry.url: http://localhost:8081
+      bootstrap-servers: localhost:9092
+# enabling the below will apply across all bindings.
+#      specific:
+#        protobuf:
+#          value:
+#            type: com.crd.events.EventType2Messages$EventType2
+    consumer:
+      group-id: EventTypeStreamConsumer
+      auto-offset-reset: earliest
+  cloud:
+    stream:
+      bindings:
+        eventtype1:
+          destination: eventtype1_topic
+        eventtype2:
+          destination: eventtype2_topic
+      kafka:
+        streams:
+          bindings:
+            eventtype1:
+              consumer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                valueSerde: io.confluent.kafka.streams.serdes.protobuf.KafkaProtobufSerde
+                consumer-properties:
+                  specific.protobuf.value.type: com.crd.events.EventType1Messages$EventType1
+#                specific:
+#                  protobuf:
+#                    value:
+#                      type: com.crd.events.EventType1Messages$EventType1
+            eventtype2:
+              consumer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                valueSerde: io.confluent.kafka.streams.serdes.protobuf.KafkaProtobufSerde
+# tried consumer-properties at different indent levels.
+              consumer-properties:
+                specific.protobuf.value.type: com.crd.events.EventType2Messages$EventType2
+          binder:
+            autoCreateTopics: true
+            minPartitionCount: 5
+            deserializationExceptionHandler: logandfail
+            configuration:
+              default:
+                key:
+                  serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                value:
+                  serde: io.confluent.kafka.streams.serdes.protobuf.KafkaProtobufSerde
